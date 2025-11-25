@@ -1,0 +1,118 @@
+
+
+from abc import ABC, abstractmethod
+
+
+class Person(ABC):
+    def __init__(self, name, age):
+        self.__name = name
+        self.__age = age
+
+    @property
+    def name(self):
+        return self.__name
+
+    @name.setter
+    def name(self, value):
+        self.__name = value
+
+    @name.deleter
+    def name(self):
+        del self.__name
+
+    @property
+    def age(self):
+        return self.__age
+
+    @abstractmethod
+    def get_role(self):
+        pass
+
+    @abstractmethod
+    def calculate_score(self):
+        pass
+
+
+class Grade(ABC):
+    @abstractmethod
+    def get_value(self):
+        pass
+
+
+class DailyGrade(Grade):
+    def __init__(self, value):
+        self.value = value
+
+    def get_value(self):
+        return self.value
+
+
+class MonthlyExamGrade(Grade):
+    def __init__(self, value):
+        self.value = value
+
+    def get_value(self):
+        return self.value
+
+
+class FinalExamGrade(Grade):
+    def __init__(self, value):
+        self.value = value
+
+    def get_value(self):
+        return self.value
+
+
+class Student(Person):
+    def __init__(self, name, age, grade: Grade):
+        super().__init__(name, age)
+        self.__grade = grade
+
+    @property
+    def grade(self):
+        return self.__grade.get_value()
+
+    def get_role(self):
+        return "Student"
+
+    def calculate_score(self):
+        return self.__grade.get_value()
+
+
+class Teacher(Person):
+    def __init__(self, name, age, subject):
+        super().__init__(name, age)
+        self.__subject = subject
+
+    @property
+    def subject(self):
+        return self.__subject
+
+    def get_role(self):
+        return "Teacher"
+
+    def calculate_score(self):
+        return 0
+
+
+class Room:
+    def __init__(self):
+        self.people = []
+
+    def add_person(self, person):
+        self.people.append(person)
+
+    def get_students(self):
+        return [p for p in self.people if isinstance(p, Student)]
+
+    def get_teachers(self):
+        return [p for p in self.people if isinstance(p, Teacher)]
+
+    def count_students(self):
+        return len(self.get_students())
+
+    def count_successful_students(self):
+        return len([s for s in self.get_students() if s.calculate_score() >= 50])
+
+    def delete_student(self, name):
+        self.people = [p for p in self.people if not(isinstance(p, Student) and p.name == name)]
